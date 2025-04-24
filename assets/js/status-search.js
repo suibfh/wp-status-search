@@ -3,7 +3,7 @@
   let currentSortBy = 'id';
   let currentSortOrder = 'asc';
 
-  // メイン処理：検索・ページ切替・ソート切替
+  // 検索・ページ切替・ソート切替のメイン処理
   function fetchCharacterStats(page = 1) {
     currentPage = page;
     const rarity     = document.getElementById('rarity').value;
@@ -12,7 +12,6 @@
     let query = `?rarity=${rarity}&version_v1=${version_v1}&version_v2=${version_v2}` +
                 `&page=${page}&sort_by=${currentSortBy}&sort_order=${currentSortOrder}`;
 
-    // 各ステータスのフィルタ条件を付与
     ['hp','attack','magic_attack','defense','magic_defense','agility'].forEach(stat => {
       const val  = document.getElementById(stat).value;
       const cond = document.getElementById(stat + '_condition').value;
@@ -24,13 +23,18 @@
     fetch(window.location.origin + '/wp-json/character-stats/search' + query)
       .then(r => r.json())
       .then(data => {
-        renderTable(data);
-        renderPagination(data);
-        updateSortArrows();
+        // モバイル幅ならカード表示、デスクトップならテーブル表示
+        if (window.innerWidth <= 768) {
+          renderCards(data);
+        } else {
+          renderTable(data);
+          renderPagination(data);
+          updateSortArrows();
+        }
       });
   }
 
-  // テーブルを描画
+  // テーブル描画
   function renderTable(response) {
     const rows = response.data;
     let html = '<table class="table table-bordered"><thead><tr>' +
@@ -48,7 +52,6 @@
 
     if (rows.length) {
       rows.forEach(r => {
-        // 数値変換して加算
         const sumAtk = Number(r.attack) + Number(r.magic_attack);
         const sumDef = Number(r.defense) + Number(r.magic_defense);
 
@@ -73,7 +76,7 @@
     document.getElementById('search-results').innerHTML = html;
   }
 
-  // ページネーションを描画
+  // ページネーション描画
   function renderPagination(response) {
     const page  = response.current_page;
     const total = response.total_pages;
@@ -96,6 +99,36 @@
     if (next) next.onclick = () => fetchCharacterStats(page + 1);
   }
 
+  // カード表示（モバイル用）
+  function renderCards(response) {
+    const rows = response.data;
+    let html = '<div class="row">';
+    rows.forEach(r => {
+      const sumAtk = Number(r.attack) + Number(r.magic_attack);
+      const sumDef = Number(r.defense) + Number(r.magic_defense);
+
+      html += `
+        <div class="col-12 mb-2">
+          <div class="card">
+            <div class="card-body p-2">
+              <p class="mb-1"><strong>レアリティ:</strong> ${r.rarity}</p>
+              <p class="mb-1"><strong>バージョン:</strong> ${r.version}</p>
+              <p class="mb-1"><strong>HP:</strong> ${r.hp}</p>
+              <p class="mb-1"><strong>攻撃:</strong> ${r.attack}</p>
+              <p class="mb-1"><strong>魔攻:</strong> ${r.magic_attack}</p>
+              <p class="mb-1"><strong>防御:</strong> ${r.defense}</p>
+              <p class="mb-1"><strong>魔防:</strong> ${r.magic_defense}</p>
+              <p class="mb-1"><strong>敏捷:</strong> ${r.agility}</p>
+              <p class="mb-1"><strong>攻撃＋魔攻:</strong> ${sumAtk}</p>
+              <p class="mb-1"><strong>防御＋魔防:</strong> ${sumDef}</p>
+            </div>
+          </div>
+        </div>`;
+    });
+    html += '</div>';
+    document.getElementById('search-results').innerHTML = html;
+  }
+
   // ソート切り替え
   window.toggleSort = function(stat) {
     if (currentSortBy === stat) {
@@ -107,23 +140,7 @@
     fetchCharacterStats(currentPage);
   };
 
-  // 矢印を更新
-  function updateSortArrows() {
-    const stats = ['hp','attack','magic_attack','atk_mgatk','def_mgdef','defense','magic_defense','agility'];
-    stats.forEach(stat => {
-      const el = document.getElementById(`arrow-${stat}`);
-      if (!el) return;
-      if (stat === currentSortBy) {
-        el.textContent = currentSortOrder === 'asc' ? ' ▲' : ' ▼';
-        el.style.color = 'black';
-      } else {
-        el.textContent = ' ▲▼';
-        el.style.color = 'gray';
-      }
-    });
-  }
-
-  // 検索ボタンイベント
+  // 検索ボタンイベント設定
   document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('search-button');
     if (btn) btn.onclick = () => fetchCharacterStats(1);

@@ -1,0 +1,22 @@
+/* テーブルの余白・フォント */
+#search-results table {
+  width: 100%;
+  margin-top: 1rem;
+  border-collapse: collapse;
+}
+#search-results th, #search-results td {
+  padding: .5rem;
+  text-align: center;
+}
+/* ヘッダー矢印のマウスオーバー効果 */
+#search-results th {
+  cursor: pointer;
+  user-select: none;
+}
+#search-results th:hover {
+  background-color: #f0f0f0;
+}
+/* ページネーションボタン */
+#search-results .btn-secondary {
+  min-width: 4rem;
+}

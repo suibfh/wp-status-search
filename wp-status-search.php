@@ -8,7 +8,7 @@
 if (! defined('ABSPATH')) exit;
 
 // 今度は search-api.php だけ読み込む
-//require_once __DIR__ . '/includes/install.php';
+require_once __DIR__ . '/includes/install.php';
 require_once __DIR__ . '/includes/search-api.php';
 
 function wpss_enqueue_assets() {

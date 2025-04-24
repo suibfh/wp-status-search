@@ -3,13 +3,12 @@
   let currentSortBy = 'id';
   let currentSortOrder = 'asc';
 
-  // メイン処理：検索・ページ切り替え・ソート切替
+  // メイン処理：検索・ページ切替・ソート切替
   function fetchCharacterStats(page = 1) {
     currentPage = page;
-    const rarity      = document.getElementById('rarity').value;
-    const version_v1  = document.getElementById('version_v1').checked ? 'v1' : '';
-    const version_v2  = document.getElementById('version_v2').checked ? 'v2' : '';
-    const stats       = ['hp','attack','magic_attack','atk_mgatk','def_mgdef','defense','magic_defense','agility'];
+    const rarity     = document.getElementById('rarity').value;
+    const version_v1 = document.getElementById('version_v1').checked ? 'v1' : '';
+    const version_v2 = document.getElementById('version_v2').checked ? 'v2' : '';
     let query = `?rarity=${rarity}&version_v1=${version_v1}&version_v2=${version_v2}` +
                 `&page=${page}&sort_by=${currentSortBy}&sort_order=${currentSortOrder}`;
 
@@ -40,26 +39,30 @@
                '<th onclick="toggleSort(\'hp\')">HP <span id="arrow-hp">▲▼</span></th>' +
                '<th onclick="toggleSort(\'attack\')">攻撃 <span id="arrow-attack">▲▼</span></th>' +
                '<th onclick="toggleSort(\'magic_attack\')">魔攻 <span id="arrow-magic_attack">▲▼</span></th>' +
-               '<th onclick="toggleSort(\'atk_mgatk\')">攻撃＋魔攻 <span id="arrow-atk_mgatk">▲▼</span></th>' +
-               '<th onclick="toggleSort(\'def_mgdef\')">防御＋魔防 <span id="arrow-def_mgdef">▲▼</span></th>' +
                '<th onclick="toggleSort(\'defense\')">防御 <span id="arrow-defense">▲▼</span></th>' +
                '<th onclick="toggleSort(\'magic_defense\')">魔防 <span id="arrow-magic_defense">▲▼</span></th>' +
                '<th onclick="toggleSort(\'agility\')">敏捷 <span id="arrow-agility">▲▼</span></th>' +
+               '<th onclick="toggleSort(\'atk_mgatk\')">攻撃＋魔攻 <span id="arrow-atk_mgatk">▲▼</span></th>' +
+               '<th onclick="toggleSort(\'def_mgdef\')">防御＋魔防 <span id="arrow-def_mgdef">▲▼</span></th>' +
                '</tr></thead><tbody>';
 
     if (rows.length) {
       rows.forEach(r => {
+        // 数値変換して加算
+        const sumAtk = Number(r.attack) + Number(r.magic_attack);
+        const sumDef = Number(r.defense) + Number(r.magic_defense);
+
         html += `<tr>
           <td>${r.rarity}</td>
           <td>${r.version}</td>
           <td>${r.hp}</td>
           <td>${r.attack}</td>
           <td>${r.magic_attack}</td>
-          <td>${r.attack + r.magic_attack}</td>
-          <td>${r.defense + r.magic_defense}</td>
           <td>${r.defense}</td>
           <td>${r.magic_defense}</td>
           <td>${r.agility}</td>
+          <td>${sumAtk}</td>
+          <td>${sumDef}</td>
         </tr>`;
       });
     } else {
@@ -84,11 +87,9 @@
     }
     html += '</div>';
 
-    // 既存の結果の下に追加
     const container = document.getElementById('search-results');
     container.insertAdjacentHTML('beforeend', html);
 
-    // ボタンイベントを設定
     const prev = document.getElementById('prev-page');
     if (prev) prev.onclick = () => fetchCharacterStats(page - 1);
     const next = document.getElementById('next-page');
@@ -122,7 +123,7 @@
     });
   }
 
-  // 検索ボタンイベントを設定
+  // 検索ボタンイベント
   document.addEventListener('DOMContentLoaded', () => {
     const btn = document.getElementById('search-button');
     if (btn) btn.onclick = () => fetchCharacterStats(1);

@@ -7,9 +7,9 @@
 */
 if (! defined('ABSPATH')) exit;
 
-// まずは install.php だけ読み込む
-require_once __DIR__ . '/includes/install.php';
-//require_once __DIR__ . '/includes/search-api.php';
+// 今度は search-api.php だけ読み込む
+//require_once __DIR__ . '/includes/install.php';
+require_once __DIR__ . '/includes/search-api.php';
 
 function wpss_enqueue_assets() {
   wp_enqueue_script('status-search-js', plugins_url('assets/js/status-search.js', __FILE__), ['jquery'], null, true);

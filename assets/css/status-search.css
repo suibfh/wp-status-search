@@ -1,22 +1,44 @@
-/* テーブルの余白・フォント */
+/* status-search.css */
+
+/* 検索結果エリアを横スクロール可能に */
+#search-results {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* テーブル全体の設定 */
 #search-results table {
   width: 100%;
-  margin-top: 1rem;
+  min-width: 100%;
   border-collapse: collapse;
 }
-#search-results th, #search-results td {
-  padding: .5rem;
+
+/* セル内で折り返さず、余白を詰める */
+#search-results th,
+#search-results td {
+  white-space: nowrap;
+  padding: .25rem .5rem;
   text-align: center;
+  vertical-align: middle;
 }
-/* ヘッダー矢印のマウスオーバー効果 */
+
+/* ヘッダーにマウスオーバー効果 */
 #search-results th {
   cursor: pointer;
   user-select: none;
 }
 #search-results th:hover {
-  background-color: #f0f0f0;
+  background-color: #f8f9fa;
 }
-/* ページネーションボタン */
+
+/* ページネーションボタンの最小幅 */
 #search-results .btn-secondary {
   min-width: 4rem;
+}
+
+/* スマホ向けの文字サイズをさらに小さく */
+@media (max-width: 576px) {
+  #search-results table {
+    font-size: 10px;
+  }
 }

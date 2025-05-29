@@ -1,44 +1,63 @@
 /* status-search.css */
 
-/* 検索結果エリアを横スクロール可能に */
+/* 検索結果エリアを横スクロール可能に (元々あった設定) */
 #search-results {
-  overflow-x: auto;
+  overflow-x: auto; /* 必要に応じて横スクロールを許可 */
   -webkit-overflow-scrolling: touch;
 }
 
 /* テーブル全体の設定 */
-#search-results table {
-  width: 100%;
-  min-width: 100%;
+.status-search-table { /* クラス名変更 */
+  table-layout: fixed; /* 列幅を固定してはみ出しを抑える */
+  width: 100%; /* 親要素に合わせる */
+  /* min-width: 100%; を削除 - 幅を制御するため */
   border-collapse: collapse;
 }
 
 /* セル内で折り返さず、余白を詰める */
-#search-results th,
-#search-results td {
-  white-space: nowrap;
-  padding: .25rem .5rem;
+.status-search-table th, /* クラス名変更 */
+.status-search-table td { /* クラス名変更 */
+  /* white-space: nowrap; を削除または調整 - テキストの改行を許可するため */
+  padding: .25rem; /* パディングを均等に減らす */
   text-align: center;
   vertical-align: middle;
+  word-break: break-all; /* 長い単語がはみ出さないように改行させる */
 }
 
 /* ヘッダーにマウスオーバー効果 */
-#search-results th {
+#search-results th { /* 既存のセレクタ */
   cursor: pointer;
   user-select: none;
 }
-#search-results th:hover {
+#search-results th:hover { /* 既存のセレクタ */
   background-color: #f8f9fa;
 }
 
-/* ページネーションボタンの最小幅 */
-#search-results .btn-secondary {
-  min-width: 4rem;
+/* レアリティとバージョンの列幅を狭くする */
+.status-search-table .col-rarity {
+    width: 6%; /* レアリティの幅を調整 */
 }
 
-/* スマホ向けの文字サイズをさらに小さく */
+.status-search-table .col-version {
+    width: 8%; /* バージョンの幅を調整 */
+}
+
+/* 各ステータス列の幅を均等に設定（残りの幅を等分） */
+/* レアリティとバージョンを除いた8列に均等に幅を割り当てる */
+.status-search-table th:not(.col-rarity):not(.col-version),
+.status-search-table td:not(.col-rarity):not(.col-version) {
+    /* (100% - 6% - 8%) / 8列 = 86% / 8 = 10.75% */
+    width: 10.75%; /* 各ステータス列の幅を調整 */
+}
+
+/* スマホ向けの文字サイズをさらに小さく (元々あった設定) */
 @media (max-width: 576px) {
-  #search-results table {
+  #search-results table { /* 既存のセレクタ */
     font-size: 10px;
   }
+}
+
+/* ページネーションボタンの最小幅 (元々あった設定) */
+#search-results .btn-secondary { /* 既存のセレクタ */
+  min-width: 4rem;
 }
